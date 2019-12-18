@@ -1,0 +1,345 @@
+#########################################################
+#                                                       #
+#                      DARK SKY                         #
+#                                                       #
+#########################################################
+
+- platform: darksky
+  api_key: !secret darksky_key
+  forecast:
+    - 0
+    - 1
+    - 2
+    - 3
+  monitored_conditions:
+    - summary
+    - precip_probability
+    - temperature
+    - temperature_high
+    - temperature_low
+    - wind_speed
+    - hourly_summary
+    - icon
+
+#########################################################
+#                                                       #
+#                        MQTT                           #
+#                                                       #
+#########################################################
+
+# Button 3 Battery
+- platform: mqtt
+  name: "Button 3 Battery"
+  state_topic: "smartthings/Button 3/battery/state"
+  unit_of_measurement: "%"
+
+# Button 4 Battery
+- platform: mqtt
+  name: "Button 4 Battery"
+  state_topic: "smartthings/Button 4/battery/state"
+  unit_of_measurement: "%"
+  
+# Button 5 Battery
+- platform: mqtt
+  name: "Button 5 Battery"
+  state_topic: "smartthings/Button 5/battery/state"
+  unit_of_measurement: "%"
+  
+# Button 6 Battery
+- platform: mqtt
+  name: "Button 6 Battery"
+  state_topic: "smartthings/Button 6/battery/state"
+  unit_of_measurement: "%"
+  
+# Button 7 Battery
+- platform: mqtt
+  name: "Button 7 Battery"
+  state_topic: "smartthings/Button 7/battery/state"
+  unit_of_measurement: "%"
+  
+# Button 8 Battery
+- platform: mqtt
+  name: "Button 8 Battery"
+  state_topic: "smartthings/Button 8/battery/state"
+  unit_of_measurement: "%"
+  
+# Office Motion Battery
+- platform: mqtt
+  name: "Office Motion Battery"
+  state_topic: "smartthings/Office Motion/battery/state"
+  unit_of_measurement: "%"
+
+# Button 7 Temperature
+- platform: mqtt
+  name: "Master Bedroom Temperature"
+  state_topic: "smartthings/Button 7/temperature/state"
+  unit_of_measurement: "°F"
+  
+# Office Motion Temperature
+- platform: mqtt
+  name: "Office Temperature"
+  state_topic: "smartthings/Office Motion/temperature/state"
+  unit_of_measurement: "°F"
+  
+#########################################################
+#                                                       #
+#                        NUT                            #
+#                                                       #
+#########################################################
+
+- platform: nut
+  host: 192.168.1.5
+  resources:
+    - battery.charge
+    - battery.runtime
+    - ups.load
+    - ups.realpower.nominal
+  
+#########################################################
+#                                                       #
+#                      SYNOLOGY                         #
+#                                                       #
+#########################################################
+
+#Synology Sensor
+- platform: synologydsm
+  host: 192.168.1.5
+  port: 5000
+  ssl: false
+  username: !secret synology_user
+  password: !secret synology_password
+  monitored_conditions:
+    - cpu_total_load
+    - memory_real_usage
+    - disk_smart_status
+    - volume_percentage_used
+
+#########################################################
+#                                                       #
+#                      TEMPLATES                        #
+#                                                       #
+#########################################################
+
+- platform: template
+  sensors:
+  
+#Next Recycle Day        
+    next_recycle:
+      friendly_name: "Next Recycle"
+      device_class: 'timestamp'
+      value_template: >-
+        {{ as_timestamp(states.calendar.recycle.attributes.end_time) | timestamp_custom('%A, %B %-d') }}
+        
+#Network Cost Per Month
+    # network_cost_per_month:
+      # friendly_name: "Network Cost Per Month"
+      # value_template: >-
+        # ${{ float((((((float(states.sensor.nut_ups_load.state)/100) * float(states.sensor.nut_ups_nominal_real_power.state)) * 24) / 1000) * (10015/100000)) * 31) | round(2) }}
+
+#UPS Usage in Watts
+    # ups_usage_watts:
+      # friendly_name: "UPS Usage in Watts"
+      # value_template: >-
+        # {{ (float(states.sensor.nut_ups_load.state)/100) * float(states.sensor.nut_ups_nominal_real_power.state) }}
+        
+#-----------------------------
+#FLOORPLAN
+#-----------------------------
+
+#Properly formatted date (i.e. 1/1/1970)
+    friendly_date:
+      friendly_name: "Current Date"
+      value_template: "{{ now().strftime('%A, %B %d') }}"
+
+#Properly formatted time (i.e. 6:00 AM)      
+    friendly_time:
+      friendly_name: "Current Time"
+      value_template: >-
+        {{ now().strftime('%I:%M %p').lstrip('0') }}
+        
+#HVAC status
+    hvac_status:
+      friendly_name: "HVAC Status"
+      value_template: >-
+        {% if is_state('sensor.entryway_thermostat_hvac_state', 'off') %}
+          HVAC is idle
+        {% elif is_state('sensor.entryway_thermostat_hvac_state', 'cool') %}
+          HVAC is cooling
+        {% elif is_state('sensor.entryway_thermostat_hvac_state', 'heat') %}
+          HVAC is heating
+        {% else %}
+          Unknown
+        {% endif %}
+        
+#HVAC temp
+    hvac_temp:
+      friendly_name: "Indoor Temp"
+      value_template: >-
+        {{ states.sensor.entryway_thermostat_temperature.state }}°
+        
+#HVAC temp and status        
+    hvac_temp_status:
+      friendly_name: "Indoor Temp and Status"
+      value_template: >-
+        {{ states.sensor.entryway_thermostat_temperature.state }}° {{ states.sensor.entryway_thermostat_hvac_state.state }}
+        
+#Current outdoor temp
+    outdoor_temp:
+      friendly_name: "Current Outdoor Temp"
+      value_template: >-
+        {{ states.sensor.dark_sky_temperature.state|round(0) }}°
+
+#Current wind speed        
+    wind_speed:
+      friendly_name: "Current Wind Speed"
+      value_template: >-
+        {{ states.sensor.dark_sky_wind_speed.state|round(0) }} mph
+
+#Current weather summary        
+    hourly_summary:
+      friendly_name: "Hourly Summary"
+      value_template: >-
+        {% if states.sensor.dark_sky_hourly_summary.state | length > 71 %}
+          {{ (states.sensor.dark_sky_hourly_summary.state | wordwrap(62, true,"§")).split("§")[0] }}...
+        {% else %}
+          {{ states.sensor.dark_sky_hourly_summary.state }}
+        {% endif %}
+
+#Today's forecast        
+    forecast_0_weather:
+      friendly_name: "Forecast 0 Weather"
+      value_template: >-
+        {{ states.sensor.dark_sky_daytime_high_temperature_0d.state|round(0) }}° | {{ states.sensor.dark_sky_overnight_low_temperature_0d.state|round(0) }}° | {{ states.sensor.dark_sky_precip_probability_0d.state|round(0) }}%
+
+#Tomorrow's forecast        
+    forecast_1_weather:
+      friendly_name: "Forecast 1 Weather"
+      value_template: >-
+        {{ states.sensor.dark_sky_daytime_high_temperature_1d.state|round(0) }}° | {{ states.sensor.dark_sky_overnight_low_temperature_1d.state|round(0) }}° | {{ states.sensor.dark_sky_precip_probability_1d.state|round(0) }}%
+
+#Forecast 2 days from today       
+    forecast_2_weather:
+      friendly_name: "Forecast 2 Weather"
+      value_template: >-
+        {{ states.sensor.dark_sky_daytime_high_temperature_2d.state|round(0) }}° | {{ states.sensor.dark_sky_overnight_low_temperature_2d.state|round(0) }}° | {{ states.sensor.dark_sky_precip_probability_2d.state|round(0) }}%
+
+#Forecast 3 days from today       
+    forecast_3_weather:
+      friendly_name: "Forecast 3 Weather"
+      value_template: >-
+        {{ states.sensor.dark_sky_daytime_high_temperature_3d.state|round(0) }}° | {{ states.sensor.dark_sky_overnight_low_temperature_3d.state|round(0) }}° | {{ states.sensor.dark_sky_precip_probability_3d.state|round(0) }}%
+
+#Tomorrow (Day)  
+    forecast_1:
+      friendly_name: "Forecast 1 Day"
+      value_template: >-
+        {%- set date = as_timestamp(now()) + (1 * 86400 ) -%}
+        {{ date | timestamp_custom("%A") }}
+
+#2 days from today (Day)   
+    forecast_2:
+      friendly_name: "Forecast 2 Day"
+      value_template: >-
+        {%- set date = as_timestamp(now()) + (2 * 86400 ) -%}
+        {{ date | timestamp_custom("%A") }}
+
+#3 days from today (Day)    
+    forecast_3:
+      friendly_name: "Forecast 3 Day"
+      value_template: >-
+        {%- set date = as_timestamp(now()) + (3 * 86400 ) -%}
+        {{ date | timestamp_custom("%A") }}
+    
+#Alarm status    
+    friendly_alarm_status:
+      friendly_name: "Alarm Status"
+      value_template: >-
+        {% if is_state('alarm_control_panel.abode_alarm_system', 'disarmed') %}
+          Disarmed
+        {% elif is_state('alarm_control_panel.abode_alarm_system', 'armed_home') %}
+          Armed Stay
+        {% elif is_state('alarm_control_panel.abode_alarm_system', 'armed_away') %}
+          Armed Away
+        {% else %}
+          Arming
+        {% endif %}
+
+#Headings and labels        
+    heading_security:
+      friendly_name: "Security"
+      value_template: "Security"
+      
+    heading_scenes:
+      friendly_name: "Scenes"
+      value_template: "Scenes"
+      
+    label_security_status:
+      friendly_name: "Security Status"
+      value_template: "Status"
+      
+    label_arm_away:
+      friendly_name: "Arm Away"
+      value_template: "Arm Away"
+      
+    label_arm_stay:
+      friendly_name: "Arm Stay"
+      value_template: "Arm Stay"
+      
+    label_goodnight:
+      friendly_name: "Goodnight"
+      value_template: "Goodnight"
+      
+    label_goodmorning:
+      friendly_name: "Good Morning"
+      value_template: "Good Morning"
+      
+    label_goodbye:
+      friendly_name: "Goodbye"
+      value_template: "Goodbye"
+      
+    label_garage_status:
+      friendly_name: "Garage Status"
+      value_template: >-
+        Garage is {{ states.group.all_covers.state }}
+        
+    label_tv_status:
+      friendly_name: "TV Status"
+      value_template: >-
+        TV is {{ states.switch.living_room_tv_power.state }}
+        
+    label_fireplace_status:
+      friendly_name: "Fireplace Status"
+      value_template: >-
+        Fireplace is {{ states.switch.fireplace.state }}
+
+#Next calendar event        
+    next_event:
+      friendly_name: "Next Event"
+      value_template: >-
+        {% if states.calendar.joe_emily_temple.attributes.all_day == 'true' %}
+          ALL DAY: {{ states.calendar.joe_emily_temple.attributes.message }}
+        {% elif strptime(states.calendar.joe_emily_temple.attributes.start_time, "%Y-%m-%d %H:%M:%S").strftime("%m-%d-%Y") == now().strftime("%m-%d-%Y") %}
+          {{ strptime(states.calendar.joe_emily_temple.attributes.start_time, "%Y-%m-%d %H:%M:%S").strftime("%I:%M %p").lstrip('0') }} - {{ strptime(states.calendar.joe_emily_temple.attributes.end_time, "%Y-%m-%d %H:%M:%S").strftime("%I:%M %p").lstrip('0') }}: {{ states.calendar.joe_emily_temple.attributes.message }}
+        {% else %}
+          No more events today.
+        {% endif %}
+        
+#Recycle day?        
+    recycle_day:
+      friendly_name: "Recycle Day"
+      value_template: >-
+        {% if strptime(states.calendar.recycle.attributes.start_time, "%Y-%m-%d %H:%M:%S").strftime("%m-%d-%Y") == now().strftime("%m-%d-%Y") %}
+          on
+        {% else %}
+          off
+        {% endif %}
+
+#Trash day?        
+    trash_day:
+      friendly_name: "Trash Day"
+      value_template: >-
+        {% if now().strftime("%A") == "Monday" %}
+          on
+        {% else %}
+          off
+        {% endif %}

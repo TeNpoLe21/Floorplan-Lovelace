@@ -1,0 +1,1141 @@
+resources:
+  - url: /local/button-card.js
+    type: module
+  - url: /local/compact-custom-header.js?v=1.4.9
+    type: module
+  - url: /local/card-mod.js?v=1
+    type: module
+  - url: 'https://fonts.googleapis.com/css?family=Roboto:100,300,400'
+    type: css
+  - url: /local/text-element.js?v=1
+    type: js
+    
+cch:
+  exceptions:
+    - conditions:
+        user: Dashboard
+      config:
+        hide_tabs: 0, 2
+        default_tab: 1
+        menu: hide
+        header: false
+    - conditions:
+        user: "Office Dashboard"
+      config:
+        medu: hide
+        header: false
+    - conditions:
+        user_agent: iPhone
+      config:
+        hide_tabs: 1
+        
+views:
+
+##############################
+#            HOME            #
+##############################
+
+  - title: Home Assistant
+    path: home
+    cards:
+    
+      #####-----VERTICAL STACK-----#####
+
+      - type: vertical-stack
+        cards:
+                  
+        #####-----HORIZONTAL STACK-----#####
+
+        - type: horizontal-stack
+          cards:
+          
+            #####-----GOODNIGHT BUTTON-----#####
+          
+            - type: 'custom:button-card'
+              color_type: icon
+              icon: 'mdi:weather-night'
+              entity: input_boolean.goodnight
+              name: Goodnight
+              tap_action:
+                action: toggle
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+                  - margin-left: 7px
+              state:
+                - value: 'on'
+                  color: 'rgb(3, 169, 244)'
+                  styles:
+                    card:
+                      - animation: blink 2s ease infinite
+                - value: 'off'
+                  color: 'rgb(3, 169, 244)'
+                  
+            #####-----GOOD MORNING BUTTON-----#####
+            
+            - type: 'custom:button-card'
+              color_type: icon
+              icon: 'mdi:weather-sunny'
+              entity: input_boolean.goodmorning
+              name: Good Morning
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+              state:
+                - value: 'on'
+                  color: 'rgb(253, 216, 53)'
+                - value: 'off'
+                  color: 'rgb(253, 216, 53)'
+                  
+            #####-----GOODBYE BUTTON-----#####
+            
+            - type: 'custom:button-card'
+              color_type: icon
+              icon: 'mdi:human-greeting'
+              entity: input_boolean.goodbye
+              name: Goodbye
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+              state:
+                - value: 'on'
+                  color: red
+                  styles:
+                    card:
+                      - animation: blink 2s ease infinite
+                - value: 'off'
+                  color: red
+
+        #####-----HORIZONTAL STACK-----#####
+        
+        - type: horizontal-stack
+          cards:
+          
+            #####-----ALARM STATUS BUTTON-----#####
+          
+            - type: 'custom:button-card'
+              color_type: icon
+              entity: alarm_control_panel.abode_alarm_system
+              name: Alarm
+              tap_action:
+                action: more-info
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+                  - margin-left: 7px
+              state:
+                - value: disarmed
+                  color: green
+                  icon: 'mdi:shield-check'
+                - value: armed_home
+                  color: red
+                  icon: 'mdi:shield-home'
+                - value: armed_away
+                  color: red
+                  icon: 'mdi:shield-lock'
+                  
+            #####-----MAIN GARAGE STATUS BUTTON-----#####
+                  
+            - type: 'custom:button-card'
+              color_type: icon
+              entity: cover.primary_garage_door
+              name: Main
+              size: 50%
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+              state:
+                - value: open
+                  color: red
+                  icon: 'mdi:garage-open'
+                - value: opening
+                  color: red
+                  icon: 'mdi:garage-alert'
+                  styles:
+                    card:
+                      - animation: blink 2s ease infinite
+                - value: closed
+                  color: green
+                  icon: 'mdi:garage'
+                - value: closing
+                  color: red
+                  icon: 'mdi:garage-alert'
+                  styles:
+                    card:
+                      - animation: blink 2s ease infinite
+                      
+            #####-----SIDE GARAGE STATUS BUTTON-----#####
+            
+            - type: 'custom:button-card'
+              color_type: icon
+              entity: cover.secondary_garage_door
+              name: Side
+              size: 50%
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+              state:
+                - value: open
+                  color: red
+                  icon: 'mdi:garage-open'
+                - value: opening
+                  color: red
+                  icon: 'mdi:garage-alert'
+                  styles:
+                    card:
+                      - animation: blink 2s ease infinite
+                - value: closed
+                  color: green
+                  icon: 'mdi:garage'
+                - value: closing
+                  color: red
+                  icon: 'mdi:garage-alert'
+                  styles:
+                    card:
+                      - animation: blink 2s ease infinite
+        
+        #####-----HORIZONTAL STACK-----#####
+                    
+        - type: horizontal-stack
+          cards:
+          
+            #####-----MASTER GOODNIGHT-----#####
+          
+            - type: 'custom:button-card'
+              entity: input_boolean.ui_button_1
+              icon: 'mdi:hotel'
+              name: Master
+              label: Goodnight
+              show_label: true
+              tap_action:
+                action: call-service
+                service: input_boolean.turn_on
+                service_data:
+                  entity_id: input_boolean.ui_button_1
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+                  - margin-left: 7px
+                icon:
+                  - color: >
+                      [[[
+                        if (states['light.master_bedroom'].state == 'off' && states['light.reading_lights'].state == 'off' && states['switch.master_noise'].state == 'on')
+                          return 'red';
+                        else
+                          return 'green';
+                      ]]]
+                  
+            #####-----ADELYN GOODNIGHT-----#####
+                  
+            - type: 'custom:button-card'
+              entity: input_boolean.ui_button_2
+              icon: 'mdi:hotel'
+              name: Adelyn
+              label: Goodnight
+              show_label: true
+              tap_action:
+                action: call-service
+                service: input_boolean.turn_on
+                service_data:
+                  entity_id: input_boolean.ui_button_2
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+                icon:
+                  - color: >
+                      [[[
+                        if (states['light.adelyn_s_bedroom'].state == 'off' && states['switch.adelyn_noise'].state == 'on')
+                          return 'red';
+                        else
+                          return 'green';
+                      ]]]
+                  
+            #####-----DELANY GOODNIGHT-----#####
+            
+            - type: 'custom:button-card'
+              entity: input_boolean.ui_button_3
+              icon: 'mdi:hotel'
+              name: Delany
+              label: Goodnight
+              show_label: true
+              tap_action:
+                action: call-service
+                service: input_boolean.turn_on
+                service_data:
+                  entity_id: input_boolean.ui_button_3
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+                icon:
+                  - color: >
+                      [[[
+                        if (states['light.delany_s_bedroom'].state == 'off' && states['switch.delany_noise'].state == 'on')
+                          return 'red';
+                        else
+                          return 'green';
+                      ]]]
+        
+        #####-----HORIZONTAL STACK-----#####
+                    
+        - type: horizontal-stack
+          cards:
+          
+            #####-----DOWNSTAIRS STATUS BUTTON-----#####
+          
+            - type: 'custom:button-card'
+              entity: group.downstairs
+              icon: 'mdi:lightbulb'
+              tap_action:
+                action: more-info
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+                  - margin-left: 7px
+                  
+            #####-----UPSTAIRS STATUS BUTTON-----#####
+                  
+            - type: 'custom:button-card'
+              entity: group.upstairs
+              icon: 'mdi:lightbulb'
+              tap_action:
+                action: more-info
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+                  
+            #####-----OUTSIDE STATUS BUTTON-----#####
+            
+            - type: 'custom:button-card'
+              entity: group.outside
+              icon: 'mdi:lightbulb'
+              tap_action:
+                action: more-info
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+                  
+        #####-----HORIZONTAL STACK-----#####
+        
+        - type: horizontal-stack
+          cards:
+          
+            #####-----NOISE STATUS BUTTON-----#####
+            
+            - type: 'custom:button-card'
+              entity: group.noise
+              icon: 'mdi:surround-sound'
+              tap_action:
+                action: more-info
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+                  - margin-left: 7px
+              state:
+                - value: 'on'
+                  color: red
+                - value: 'off'
+                  color: green
+                  
+            #####-----FIREPLACE BUTTON-----#####
+            
+            - type: 'custom:button-card'
+              entity: switch.fireplace
+              icon: 'mdi:fire'
+              color_type: icon
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+              state:
+                - value: 'on'
+                  color: 'rgb(255, 152, 0)'
+                - value: 'off'
+                  color: green
+                  
+            #####-----INDOOR TEMP STATUS BUTTON-----#####
+            
+            - type: 'custom:button-card'
+              entity: sensor.entryway_thermostat_temperature
+              show_icon: false
+              show_label: true
+              name: >
+                [[[
+                  return `<span style="font-size: 36pt;">&nbsp;${Math.round(states['sensor.entryway_thermostat_temperature'].state)}<span style="font-size: 0.7em; vertical-align: 25%;">°</span></span>`
+                ]]]
+              label: >
+                [[[
+                  if (states['sensor.entryway_thermostat_hvac_state'].state == 'off')
+                    return "Idle";
+                  else if (states['sensor.entryway_thermostat_hvac_state'].state == 'cool')
+                    return "Cooling";
+                  else
+                    return "Heating";
+                ]]]
+              styles:
+                card:
+                  - height: 120px
+                  - width: 115px
+                  - border-radius: 10px
+                grid:
+                  - grid-template-areas: '"n" "l"'
+                  - grid-template-columns: 1fr
+                  - grid-template-rows: 1fr min-content
+                name:
+                  - font-weight: 300
+                  - align-self: center
+                  - color: >
+                      [[[
+                        if (states['sensor.entryway_thermostat_hvac_state'].state == 'off')
+                          return 'rgb(68, 115, 158)';
+                        else if (states['sensor.entryway_thermostat_hvac_state'].state == 'cool')
+                          return 'rgb(3, 169, 244)';
+                        else
+                          return 'red';
+                      ]]]
+                      
+        #####-----HORIZONTAL STACK-----#####
+        
+        - type: horizontal-stack
+          cards:
+          
+            #####-----LIVING ROOM TV STATUS BUTTON-----#####
+            
+            - type: 'custom:button-card'
+              entity: switch.living_room_tv_power
+              icon: >
+                [[[
+                  if (entity.state == 'on')
+                    return 'mdi:television';
+                  else
+                    return 'mdi:television-off';
+                ]]]
+              name: Living Rm TV
+              styles:
+                card:
+                  - height: 120px
+                  - width: 115px
+                  - margin-left: 7px
+                  - border-radius: 10px
+                icon:
+                  - color: >
+                      [[[
+                        if (entity.state == 'on')
+                          return 'red';
+                        else
+                          return 'green';
+                      ]]] 
+                      
+            #####-----PLAYROOM TV STATUS BUTTON-----#####
+            
+            - type: 'custom:button-card'
+              name: Playroom TV
+              icon: 'mdi:television-off'
+              styles:
+                card:
+                  - height: 120px
+                  - width: 115px
+                  - border-radius: 10px
+                icon:
+                  - color: green
+            
+            #####-----NAS STATUS BUTTON-----#####
+            
+            - type: 'custom:button-card'
+              entity: sensor.synology_dsm_cpu_load_total
+              name: >
+                [[[
+                  return `<span>${states['sensor.synology_dsm_cpu_load_total'].state}% / ${states['sensor.synology_dsm_memory_usage_real'].state}%</span>`
+                ]]]
+              icon: 'mdi:nas'
+              tap_action:
+                action: more-info
+              styles:
+                card:
+                  - height: 120px
+                  - width: 115px
+                  - border-radius: 10px
+                icon:
+                  - color: >
+                      [[[
+                        if (states['sensor.synology_dsm_cpu_load_total'].state < 50 && states['sensor.synology_dsm_memory_usage_real'].state < 75)
+                          return 'green';
+                        else
+                          return 'red';
+                      ]]]
+                      
+        #####-----HORIZONTAL STACK-----#####
+        
+        - type: horizontal-stack
+          cards:
+          
+            #####-----PAISLEY COMBOGAURD-----#####
+            
+            - type: 'custom:button-card'
+              entity: input_datetime.paisley_comboguard
+              name: Paisley
+              icon: 'mdi:dog'
+              color_type: icon
+              tap_action:
+                action: more-info
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+                  - margin-left: 7px
+                icon:
+                  - color: >
+                      [[[
+                        if (states['input_boolean.ui_button_4'].state == 'on')
+                          return 'red';
+                        else
+                          return 'green';
+                      ]]]
+                  
+            #####-----FURNACE FILTER-----#####
+            
+            - type: 'custom:button-card'
+              entity: input_datetime.furnace_filter
+              name: Furnace
+              icon: 'mdi:air-filter'
+              color_type: icon
+              color: 'rgb(68, 115, 158)'
+              tap_action:
+                action: more-info
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+                icon:
+                  - color: >
+                      [[[
+                        if (states['input_boolean.ui_button_5'].state == 'on')
+                          return 'red';
+                        else
+                          return 'green';
+                      ]]]
+                  
+            #####-----WATER SOFTENER-----#####
+            
+            - type: 'custom:button-card'
+              entity: input_datetime.water_softener
+              name: Softener
+              icon: 'mdi:grain'
+              color_type: icon
+              color: 'rgb(68, 115, 158)'
+              tap_action:
+                action: more-info
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+                icon:
+                  - color: >
+                      [[[
+                        if (states['input_boolean.ui_button_6'].state == 'on')
+                          return 'red';
+                        else
+                          return 'green';
+                      ]]]
+                  
+        #####-----HORIZONTAL STACK-----#####
+        
+        - type: horizontal-stack
+          cards:
+          
+            #####----DOORBELL-----#####
+            
+            - type: 'custom:button-card'
+              color_type: icon
+              entity: switch.doorbell_chime_active
+              name: Doorbell
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+                  - margin-left: 7px
+              state:
+                - value: 'on'
+                  color: green
+                  icon: 'mdi:bell-ring'
+                - value: 'off'
+                  color: red
+                  icon: 'mdi:bell-alert'
+                  
+            #####-----DOWNSTAIRS VACUUM-----#####
+            
+            - type: 'custom:button-card'
+              color_type: icon
+              entity: vacuum.xiaomi_vacuum_cleaner
+              icon: 'mdi:robot-vacuum'
+              name: Downstairs
+              tap_action:
+                action: more-info
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+              state:
+                - value: 'docked'
+                  color: green
+                - value: 'cleaning'
+                  color: red
+                  
+            #####-----UPSTAIRS VACUUM-----#####
+            
+            - type: 'custom:button-card'
+              color_type: icon
+              entity: vacuum.neato_d3
+              icon: 'mdi:robot-vacuum-variant'
+              name: Upstairs
+              tap_action:
+                action: more-info
+              styles:
+                card:
+                  - border-radius: 10px
+                  - height: 120px
+                  - width: 115px
+              state:
+                - value: 'docked'
+                  color: green
+                - value: 'cleaning'
+                  color: red
+                    
+##############################
+#          DASHBOARD         #
+##############################
+
+  - title: Dashboard
+    path: dashboard
+    panel: true
+    cards:
+    
+      - type: picture-elements
+        image: /local/dashboard/background.png
+        elements:
+          - type: state-label
+            entity: sensor.friendly_date
+            style:
+              top: .5%
+              left: 1.2%
+              font-size: 160%
+              font-family: Roboto
+              font-weight: 300
+              color: white
+              transform: none
+          - type: state-label
+            entity: sensor.friendly_time
+            style:
+              top: .5%
+              right: 1.2%
+              font-size: 160%
+              font-family: Roboto
+              font-weight: 300
+              color: white
+              transform: none
+          - type: custom:text-element
+            text: "Security"
+            style:
+              top: 12.5%
+              left: 56.5%
+              font-size: 150%
+              font-family: Roboto
+              font-weight: 300
+              color: white
+          - type: custom:text-element
+            text: "Scenes"
+            style:
+              top: 42.5%
+              left: 56.2%
+              font-size: 150%
+              font-family: Roboto
+              font-weight: 300
+              color: white
+          - type: custom:text-element
+            text: "Status"
+            style:
+              top: 18%
+              left: 59%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: 'rgb(27, 48, 57)'
+          - type: custom:text-element
+            text: "Arm Away"
+            style:
+              top: 18%
+              left: 75%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: 'rgb(27, 48, 57)'
+          - type: custom:text-element
+            text: "Arm Home"
+            style:
+              top: 18%
+              left: 91%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: 'rgb(27, 48, 57)'
+          - type: image
+            entity: alarm_control_panel.abode_alarm_system
+            state_image:
+              "disarmed": /local/dashboard/images/security/disarmed.svg
+              "armed_away": /local/dashboard/images/security/armed_away.svg
+              "armed_home": /local/dashboard/images/security/armed_home.svg
+            style:
+              top: 28%
+              left: 59%
+              width: 8%
+          - type: image
+            entity: alarm_control_panel.abode_alarm_system
+            tap_action:
+              action: call-service
+              service: alarm_control_panel.alarm_arm_away
+              service_data:
+                entity_id: alarm_control_panel.abode_alarm_system
+            image: /local/dashboard/images/security/armed_away_button.svg
+            style:
+              top: 28%
+              left: 75%
+              width: 8%
+          - type: image
+            entity: alarm_control_panel.abode_alarm_system
+            tap_action:
+              action: call-service
+              service: alarm_control_panel.alarm_arm_home
+              service_data:
+                entity_id: alarm_control_panel.abode_alarm_system
+            image: /local/dashboard/images/security/armed_home_button.svg
+            style:
+              top: 28%
+              left: 91%
+              width: 8%
+          - type: custom:text-element
+            text: "Goodnight"
+            style:
+              top: 48%
+              left: 59%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: 'rgb(27, 48, 57)'
+          - type: custom:text-element
+            text: "Good Morning"
+            style:
+              top: 48%
+              left: 75%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: 'rgb(27, 48, 57)'
+          - type: custom:text-element
+            text: "Goodbye"
+            style:
+              top: 48%
+              left: 91%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: 'rgb(27, 48, 57)'
+          - type: image
+            entity: input_boolean.goodnight
+            tap_action:
+              action: toggle
+            image: /local/dashboard/images/scenes/goodnight.svg
+            filter: saturate(1.0)
+            state_filter:
+              "on": saturate(0.2)
+            style:
+              top: 58%
+              left: 59%
+              width: 8%
+          - type: image
+            entity: input_boolean.goodmorning
+            tap_action:
+              action: toggle
+            image: /local/dashboard/images/scenes/goodmorning.svg
+            filter: saturate(1.0)
+            state_filter:
+              "on": saturate(0.2)
+            style:
+              top: 58%
+              left: 75%
+              width: 8%
+          - type: image
+            entity: input_boolean.goodbye
+            tap_action:
+              action: toggle
+            image: /local/dashboard/images/scenes/goodbye.svg
+            filter: saturate(1.0)
+            state_filter:
+              "on": saturate(0.2)
+            style:
+              top: 58%
+              left: 91%
+              width: 8%
+          - type: image
+            entity: sensor.dark_sky_icon
+            state_image:
+              "clear-day": /local/dashboard/images/weather/day.svg
+              "clear-night": /local/dashboard/images/weather/night.svg
+              "partly-cloudy-day": /local/dashboard/images/weather/cloudy-day.svg
+              "partly-cloudy-night": /local/dashboard/images/weather/cloudy-night.svg
+              "cloudy": /local/dashboard/images/weather/cloudy.svg
+              "rain": /local/dashboard/images/weather/rainy.svg
+              "sleet": /local/dashboard/images/weather/sleet.svg
+              "snow": /local/dashboard/images/weather/snowy.svg
+              "wind": /local/dashboard/images/weather/wind.svg
+              "fog": /local/dashboard/images/weather/fog.svg
+            style:
+              top: 24%
+              left: 14%
+              width: 13%
+          - type: state-label
+            entity: sensor.outdoor_temp
+            style:
+              top: 24%
+              left: 36.1%
+              font-size: 800%
+              font-family: Roboto
+              font-weight: 100
+              color: white
+          - type: state-label
+            entity: sensor.forecast_0_weather
+            style:
+              top: 36%
+              left: 34.2%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: white
+          - type: state-label
+            entity: sensor.wind_speed
+            style:
+              top: 33.4%
+              right: 51%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: white
+              transform: none
+          - type: state-label
+            entity: sensor.forecast_1
+            style:
+              top: 41%
+              left: 10.5%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: white
+          - type: state-label
+            entity: sensor.forecast_2
+            style:
+              top: 41%
+              left: 26%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: white
+          - type: state-label
+            entity: sensor.forecast_3
+            style:
+              top: 41%
+              left: 41%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: white
+          - type: image
+            entity: sensor.dark_sky_icon_1d
+            state_image:
+              "clear-day": /local/dashboard/images/weather/black/day.svg
+              "clear-night": /local/dashboard/images/weather/black/night.svg
+              "partly-cloudy-day": /local/dashboard/images/weather/black/cloudy-day.svg
+              "partly-cloudy-night": /local/dashboard/images/weather/black/cloudy-night.svg
+              "cloudy": /local/dashboard/images/weather/black/cloudy.svg
+              "rain": /local/dashboard/images/weather/black/rainy.svg
+              "sleet": /local/dashboard/images/weather/black/sleet.svg
+              "snow": /local/dashboard/images/weather/black/snowy.svg
+              "wind": /local/dashboard/images/weather/black/wind.svg
+              "fog": /local/dashboard/images/weather/black/fog.svg
+            style:
+              top: 50%
+              left: 10.5%
+              width: 6%
+          - type: image
+            entity: sensor.dark_sky_icon_2d
+            state_image:
+              "clear-day": /local/dashboard/images/weather/black/day.svg
+              "clear-night": /local/dashboard/images/weather/black/night.svg
+              "partly-cloudy-day": /local/dashboard/images/weather/black/cloudy-day.svg
+              "partly-cloudy-night": /local/dashboard/images/weather/black/cloudy-night.svg
+              "cloudy": /local/dashboard/images/weather/black/cloudy.svg
+              "rain": /local/dashboard/images/weather/black/rainy.svg
+              "sleet": /local/dashboard/images/weather/black/sleet.svg
+              "snow": /local/dashboard/images/weather/black/snowy.svg
+              "wind": /local/dashboard/images/weather/black/wind.svg
+              "fog": /local/dashboard/images/weather/black/fog.svg
+            style:
+              top: 50%
+              left: 26%
+              width: 6%
+          - type: image
+            entity: sensor.dark_sky_icon_3d
+            state_image:
+              "clear-day": /local/dashboard/images/weather/black/day.svg
+              "clear-night": /local/dashboard/images/weather/black/night.svg
+              "partly-cloudy-day": /local/dashboard/images/weather/black/cloudy-day.svg
+              "partly-cloudy-night": /local/dashboard/images/weather/black/cloudy-night.svg
+              "cloudy": /local/dashboard/images/weather/black/cloudy.svg
+              "rain": /local/dashboard/images/weather/black/rainy.svg
+              "sleet": /local/dashboard/images/weather/black/sleet.svg
+              "snow": /local/dashboard/images/weather/black/snowy.svg
+              "wind": /local/dashboard/images/weather/black/wind.svg
+              "fog": /local/dashboard/images/weather/black/fog.svg
+            style:
+              top: 50%
+              left: 41%
+              width: 6%
+          - type: state-label
+            entity: sensor.forecast_1_weather
+            style:
+              top: 59%
+              left: 10.5%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: 'rgb(27, 48, 57)'
+          - type: state-label
+            entity: sensor.forecast_2_weather
+            style:
+              top: 59%
+              left: 26%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: 'rgb(27, 48, 57)'
+          - type: state-label
+            entity: sensor.forecast_3_weather
+            style:
+              top: 59%
+              left: 41%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: 'rgb(27, 48, 57)'
+          - type: state-label
+            entity: sensor.hourly_summary
+            style:
+              top: 61.9%
+              left: 2.6%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: white
+              transform: none
+          - type: image
+            entity: cover.primary_garage_door
+            tap_action:
+              action: call-service
+              service: input_boolean.turn_on
+              service_data:
+                entity_id: input_boolean.garage_button
+            state_image:
+              "open": /local/dashboard/images/garage/garage_open.svg
+              "opening": /local/dashboard/images/garage/garage_open.svg
+              "closing": /local/dashboard/images/garage/garage_open.svg
+              "closed": /local/dashboard/images/garage/garage_closed.svg
+            style:
+              top: 80%
+              left: 8.55%
+              width: 10%
+          - type: state-label
+            entity: sensor.label_garage_status
+            style:
+              top: 77.8%
+              left: 13.7%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: white
+              transform: none
+          - type: image
+            entity: switch.living_room_tv_power
+            tap_action:
+              action: call-service
+              service: input_boolean.turn_on
+              service_data:
+                entity_id: input_boolean.tv_button
+            state_image:
+              "on": /local/dashboard/images/tv/tv_on.svg
+              "off": /local/dashboard/images/tv/tv_off.svg
+            style:
+              top: 80%
+              left: 31.6%
+              width: 10%
+          - type: state-label
+            entity: sensor.label_tv_status
+            style:
+              top: 77.8%
+              left: 36.8%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: white
+              transform: none
+          - type: conditional
+            conditions:
+              - entity: sensor.entryway_thermostat_hvac_state
+                state: 'off'
+            elements:
+              - type: state-label
+                entity: sensor.hvac_temp
+                style:
+                  top: 80.2%
+                  left: 55.2%
+                  font-size: 300%
+                  font-family: Roboto
+                  color: 'rgb(56, 142, 60)'
+          - type: conditional
+            conditions:
+              - entity: sensor.entryway_thermostat_hvac_state
+                state: 'cool'
+            elements:
+              - type: state-label
+                entity: sensor.hvac_temp
+                style:
+                  top: 80.2%
+                  left: 55.2%
+                  font-size: 300%
+                  font-family: Roboto
+                  color: 'rgb(114, 184, 212)'
+          - type: conditional
+            conditions:
+              - entity: sensor.entryway_thermostat_hvac_state
+                state: 'heat'
+            elements:
+              - type: state-label
+                entity: sensor.hvac_temp
+                style:
+                  top: 80.2%
+                  left: 55.2%
+                  font-size: 300%
+                  font-family: Roboto
+                  color: 'rgb(211, 47, 47)'
+          - type: state-label
+            entity: sensor.hvac_status
+            style:
+              top: 77.8%
+              left: 59.8%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: white
+              transform: none
+          - type: image
+            entity: switch.fireplace
+            tap_action:
+              action: toggle
+            state_image:
+              "on": /local/dashboard/images/fireplace/fireplace_on.svg
+              "off": /local/dashboard/images/fireplace/fireplace_off.svg
+            style:
+              top: 80%
+              left: 77.75%
+              width: 10%
+          - type: state-label
+            entity: sensor.label_fireplace_status
+            style:
+              top: 77.8%
+              left: 82.8%
+              font-size: 100%
+              font-family: Roboto
+              font-weight: 300
+              color: white
+              transform: none
+          - type: image
+            entity: sensor.recycle_day
+            state_image:
+              "on": /local/dashboard/images/trash_recycle/recycle_on.svg
+              "off": /local/dashboard/images/trash_recycle/recycle_off.svg
+            style:
+              top: 95.2%
+              left: 91.5%
+              width: 4.2%
+          - type: image
+            entity: sensor.trash_day
+            state_image:
+              "on": /local/dashboard/images/trash_recycle/trash_on.svg
+              "off": /local/dashboard/images/trash_recycle/trash_off.svg
+            style:
+              top: 95%
+              left: 96.7%
+              width: 3.5%
+
+##############################
+#           CAMERAS          #
+##############################
+
+  - title: Cameras
+    path: cameras
+    cards:
+    
+      - type: picture-entity
+        entity: camera.front_porch_2
+        name: Front Porch
+        show_header_toggle: false
+        show_name: false
+        show_state: false
+      # - type: picture-entity
+        # entity: camera.front_yard_2
+        # camera_view: live
+        # show_name: false
+        # show_state: false
+      # - type: picture-entity
+        # entity: camera.driveway_1_2
+        # camera_view: live
+        # show_name: false
+        # show_state: false
+      # - type: picture-entity
+        # entity: camera.driveway_2_2
+        # camera_view: live
+        # show_name: false
+        # show_state: false
+      # - type: picture-entity
+        # entity: camera.backyard_2
+        # camera_view: live
+        # show_name: false
+        # show_state: false
